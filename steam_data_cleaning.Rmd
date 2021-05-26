@@ -55,3 +55,85 @@ steam %>%
 ```
 
 Given that there are 27,075 rows in the data frame and 27,075 distinct IDs, it is safe to say that each of them are unique.
+
+Notice how the `platforms` field has multiple values separated by semicolons for many observations, such as `windows`, `mac`, and even `linux` in some instances. This field should be split into as many distinct fields as there are values separated by the semicolon. First, let's check to see what the unique values are in this column.
+
+```{r}
+unique(steam$platforms)
+```
+
+This reveals that there are seven combinations of platforms in this column, but that there are only three distinct platforms (windows, mac, and linux). The next step is to split the `platforms` field into three, one for each distinct platform.
+
+The method I used to do this was to create a new data frame using the steam data frame. In it, the platforms variable contains observations with multiple delimited values, so I used the `separate_rows` function to separate the values and place each on its own row. I then selected the `appid`, `name`, and `platforms` columns so I could eventually check the results and joing the resulting data frame with the original. I had to add a column with a value denoting that the particular game is supported on that platform (with the value of 1). Finally, I used the `spread` function to spread the `platforms` column over multiple based on the unique values in it ("windows", "mac", and "linux"). This required the use of the `is_on_platform` column for the new columns to hold their respective values.
+
+```{r}
+steam_platforms <- steam %>% 
+  separate_rows(platforms) %>% 
+  select(appid, platforms) %>% 
+  mutate(is_on_platform = 1) %>% 
+  spread(platforms, is_on_platform)
+```
+
+This is the result:
+
+```{r}
+steam_platforms
+```
+
+Next, I will join the `steam_platforms` data frame to the existing `steam` data frame so that these new columns are included.
+
+```{r}
+steam <- steam %>% 
+  inner_join(steam_platforms, by = "appid")
+```
+
+To double-check that the new columns for each platform are correct, I will select the `platforms` and the new platform columns to see if they are aligned. I will do this for each of the seven unique combinations of platforms that I found earlier.
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "windows;mac;linux")
+```
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "windows;mac")
+```
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "windows")
+```
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "windows;linux")
+```
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "mac")
+```
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "mac;linux")
+```
+
+```{r}
+steam %>% 
+  select(appid, name, platforms, windows, mac, linux) %>% 
+  filter(platforms == "linux")
+```
+
+I'm going to reorder the columns so that these new platform ones are closer to the original `platforms` .
+
+```{r}
+steam <- steam[, c(1:7, 21, 20, 19, 8:18)]
+steam
+```
