@@ -33,3 +33,16 @@ str(steam)
 sapply(steam, class)
 ```
 
+Convert the release_date observations from character strings to dates using the `lubridate` package.
+
+```{r}
+library(lubridate)
+```
+
+```{r}
+steam$release_date <- mdy(steam$release_date)
+```
+
+```{r}
+class(steam$release_date)
+```
