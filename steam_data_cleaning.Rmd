@@ -46,3 +46,12 @@ steam$release_date <- mdy(steam$release_date)
 ```{r}
 class(steam$release_date)
 ```
+
+Next, I want to check if every `appid` in the `appid` field is unique by counting the total number of rows and the number of distinct IDs in the dataset.
+
+```{r}
+steam %>% 
+  summarize(appid_count = nrow(.), distinct_appid_count = n_distinct(appid))
+```
+
+Given that there are 27,075 rows in the data frame and 27,075 distinct IDs, it is safe to say that each of them are unique.
