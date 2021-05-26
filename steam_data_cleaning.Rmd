@@ -1,0 +1,35 @@
+---
+title: "steam_data_cleaning"
+author: "Dennis Bartsch"
+date: "5/25/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is the beginning of the R Shiny Project. Here, I begin by setting up my environment by importing the `tidyverse` library, as it has many of the packages I will need, including `ggplot2`, `dplyr`, and more.
+
+```{r}
+library(tidyverse)
+```
+
+The dataset I am using is a collection of games hosted on the Steam video game digital distribution service. This dataset was originally gathered in May of 2019. In this file, I am going to outline my process of cleaning the data. I will being by reading in the dataset, which is contained in a csv file.
+
+```{r}
+steam <- read_csv("./steam.csv")
+```
+
+The first step is to review the structure of the data frame, including looking at the classes of each field in the data frame to see if they are appropriate for the given variable. Among other things, it's shown that the observations in the `release_date` field are all character strings instead of dates. We also see that there are 27,075 observations in total.
+
+```{r}
+str(steam)
+```
+
+```{r}
+sapply(steam, class)
+```
+
