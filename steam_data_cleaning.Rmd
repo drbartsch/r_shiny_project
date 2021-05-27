@@ -160,3 +160,26 @@ Next, I will join the `steam_categories` data frame to the existing `steam` data
 steam <- steam %>% 
   inner_join(steam_categories, by = "appid")
 ```
+
+As I did earlier with `platforms` and `categories`, I am going to split another column in the dataset called `genres`, as many observations contain multiple values that could each be considered their own distinct variables (e.g. action, indie, strategy, etc.).
+
+```{r}
+steam_genres <- steam %>% 
+  separate_rows(genres, sep = ";") %>% 
+  select(appid, genres) %>% 
+  mutate(has_genre = 1) %>% 
+  spread(genres, has_genre)
+```
+
+This is the result:
+
+```{r}
+steam_genres
+```
+
+Next, I will join the `steam_genres` data frame to the existing `steam` data frame so that these new columns are included.
+
+```{r}
+steam <- steam %>% 
+  inner_join(steam_genres, by = "appid")
+```
