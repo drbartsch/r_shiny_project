@@ -137,3 +137,26 @@ I'm going to reorder the columns so that these new platform ones are closer to t
 steam <- steam[, c(1:7, 21, 20, 19, 8:18)]
 steam
 ```
+
+As I did earlier, I am going to split another column in the dataset called `categories`, as many observations contain multiple values that could each be considered their own distinct variables (e.g. multi-player, Valve Anti-Cheat enabled, etc.).
+
+```{r}
+steam_categories <- steam %>% 
+  separate_rows(categories, sep = ";") %>% 
+  select(appid, categories) %>% 
+  mutate(is_in_category = 1) %>% 
+  spread(categories, is_in_category)
+```
+
+This is the result:
+
+```{r}
+steam_categories
+```
+
+Next, I will join the `steam_categories` data frame to the existing `steam` data frame so that these new columns are included.
+
+```{r}
+steam <- steam %>% 
+  inner_join(steam_categories, by = "appid")
+```
