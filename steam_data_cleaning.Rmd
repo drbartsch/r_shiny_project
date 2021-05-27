@@ -183,3 +183,21 @@ Next, I will join the `steam_genres` data frame to the existing `steam` data fra
 steam <- steam %>% 
   inner_join(steam_genres, by = "appid")
 ```
+
+As I did earlier with `platforms`, `categories`, and `genres` I am going to split another column in the dataset called `steamspytags`, as many observations contain multiple values that could each be considered their own distinct variables (e.g. action, indie, strategy, etc.). Some of these tags include data that will be repeated, such as `Action` for the first game in the dataset. However, there are some useful tags that have not been included in the genres that are in the `steamspytags` observations, such as FPS (first-person-shooter).
+
+```{r}
+steamspy_tags <- steam %>% 
+  separate_rows(steamspy_tags, sep = ";") %>% 
+  select(appid, steamspy_tags) %>% 
+  mutate(has_tag = 1) %>% 
+  spread(steamspy_tags, has_tag)
+```
+
+This is the result:
+
+```{r}
+steamspy_tags
+```
+
+For now, I am going to keep the `steamspy_tags` data frame separate from the `steam` one, as there are 341 variables in `steamspy_tags`, many of which are not relevant. I can join the tables if I'm curious about something specific later on.
